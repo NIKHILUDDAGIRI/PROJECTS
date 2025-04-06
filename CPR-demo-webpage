@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smartwatch CPR Emergency Assistant</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #f44336;
+      font-size: 2em;
+    }
+
+    .watch {
+      width: 300px;
+      margin: 40px auto;
+      background-color: black;
+      height: 300px;
+      border-radius: 40px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .watch-display {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 0 0 5px black;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    .button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      margin: 0 10px;
+      border-radius: 24px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .status.success {
+      color: green;
+    }
+
+    .status.alert {
+      color: red;
+    }
+
+    .cpr-instructions {
+      color: white;
+      font-size: 18px;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Smartwatch CPR Emergency Assistant</h1>
+  <div class="watch">
+    <div id="watchDisplay" class="watch-display">
+      <span id="bpmText">95 BPM<br/>Normal operation</span>
+      <div id="cprInstructions" class="cpr-instructions">
+        Begin CPR:<br/>
+        1. Place hands in center of chest<br/>
+        2. Push hard and fast (100-120 compressions/minute)<br/>
+        3. Give 2 rescue breaths every 30 compressions<br/>
+        4. Continue until help arrives
+      </div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="button" onclick="simulateFall()">Simulate Fall</button>
+    <button class="button" onclick="resetDemo()">Reset Demo</button>
+  </div>
+
+  <div id="status" class="status success">
+    ✅ Heartbeat detected (69 BPM). No CPR needed.
+  </div>
+
+  <audio id="cprAudio">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      function simulateFall() {
+        const bpm = Math.random() < 0.5 ? 0 : Math.floor(Math.random() * 40) + 60;
+        const status = document.getElementById('status');
+        const bpmText = document.getElementById('bpmText');
+        const cprInstructions = document.getElementById('cprInstructions');
+        const audio = document.getElementById('cprAudio');
+
+        if (bpm === 0) {
+          status.innerHTML = '⚠️ No heartbeat detected! Initiating CPR instructions...';
+          status.className = 'status alert';
+          bpmText.innerHTML = 'No BPM<br/>Start CPR!';
+          cprInstructions.style.display = 'block';
+          audio.play();
+        } else {
+          status.innerHTML = `✅ Heartbeat detected (${bpm} BPM). No CPR needed.`;
+          status.className = 'status success';
+          bpmText.innerHTML = `${bpm} BPM<br/>Normal operation`;
+          cprInstructions.style.display = 'none';
+          audio.pause();
+          audio.currentTime = 0;
+        }
+      }
+
+      function resetDemo() {
+        const status = document.getElementById('status');
+        const bpmText = document.getElementById('bpmText');
+        const cprInstructions = document.getElementById('cprInstructions');
+        const audio = document.getElementById('cprAudio');
+        status.innerHTML = '✅ Heartbeat detected (69 BPM). No CPR needed.';
+        status.className = 'status success';
+        bpmText.innerHTML = '95 BPM<br/>Normal operation';
+        cprInstructions.style.display = 'none';
+        audio.pause();
+        audio.currentTime = 0;
+      }
+
+      window.simulateFall = simulateFall;
+      window.resetDemo = resetDemo;
+    });
+  </script>
+</body>
+</html>
